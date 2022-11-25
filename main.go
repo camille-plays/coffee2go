@@ -9,6 +9,7 @@ import (
 func main() {
 	router := gin.Default()
 	router.GET("/people", getPeople)
+	router.POST("/people", postPeople)
 
 	router.Run("localhost:8080")
 }
@@ -31,4 +32,18 @@ var people = []person{
 
 func getPeople(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, people)
+}
+
+func postPeople(c *gin.Context) {
+	var newPerson person
+
+	// Call BindJSON to bind the received JSON to
+	// newPerson.
+	if err := c.BindJSON(&newPerson); err != nil {
+		return
+	}
+
+	// Add the new person to the slice.
+	people = append(people, newPerson)
+	c.IndentedJSON(http.StatusCreated, newPerson)
 }
