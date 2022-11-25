@@ -10,6 +10,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/people", getPeople)
 	router.POST("/people", postPeople)
+	router.GET("/people/:id", getPersonByID)
 
 	router.Run("localhost:8080")
 }
@@ -46,4 +47,18 @@ func postPeople(c *gin.Context) {
 	// Add the new person to the slice.
 	people = append(people, newPerson)
 	c.IndentedJSON(http.StatusCreated, newPerson)
+}
+
+func getPersonByID(c *gin.Context) {
+	id := c.Param("id")
+
+	// Loop over the list of people, looking for
+	// the person whose ID value matches the parameter.
+	for _, a := range people {
+		if a.ID == id {
+			c.IndentedJSON(http.StatusOK, a)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "person not found"})
 }
