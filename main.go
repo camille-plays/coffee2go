@@ -1,5 +1,18 @@
 package main
 
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	router := gin.Default()
+	router.GET("/people", getPeople)
+
+	router.Run("localhost:8080")
+}
+
 type person struct {
 	ID     string `json:"id"`
 	Name   string `json:"name"`
@@ -14,4 +27,8 @@ var people = []person{
 	{ID: "4", Name: "Steve", Email: "***REMOVED***", Credit: 0},
 	{ID: "5", Name: "Kenny", Email: "***REMOVED***", Credit: 0},
 	{ID: "6", Name: "Brian", Email: "***REMOVED***", Credit: 0},
+}
+
+func getPeople(c *gin.Context) {
+	c.IndentedJSON(http.StatusOK, people)
 }
