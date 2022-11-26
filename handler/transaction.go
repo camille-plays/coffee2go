@@ -61,7 +61,6 @@ func transactionFromRequest(t TransactionRequest) dao.Transaction {
 }
 
 func (h Handler) validateTransaction(tr TransactionRequest) error {
-
 	if tr.Owner == "" {
 		return fmt.Errorf("Please provide an owner")
 	}
@@ -75,6 +74,5 @@ func (h Handler) validateTransaction(tr TransactionRequest) error {
 			return fmt.Errorf("owner or recipient does not exist")
 		}
 	}
-
 	return nil
 }
