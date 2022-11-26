@@ -17,8 +17,8 @@ func (h Handler) CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	if err := validateTransaction(transactionRequest); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, err)
+	if err := h.validateTransaction(transactionRequest); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -60,14 +60,21 @@ func transactionFromRequest(t TransactionRequest) dao.Transaction {
 	}
 }
 
-func validateTransaction(transactionRequest TransactionRequest) error {
+func (h Handler) validateTransaction(tr TransactionRequest) error {
 
-	if transactionRequest.Owner == "" {
+	if tr.Owner == "" {
 		return fmt.Errorf("Please provide an owner")
 	}
 
-	if transactionRequest.Recipients == nil {
+	if tr.Recipients == nil || len(tr.Recipients) == 0 {
 		return fmt.Errorf("please provide a list of recipients")
 	}
+
+	for _, u := range append(tr.Recipients, tr.Owner) {
+		if h.DB.GetUser(u) == nil {
+			return fmt.Errorf("owner or recipient does not exist")
+		}
+	}
+
 	return nil
 }

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"github.com/camille-plays/coffee2go/dao"
-	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -26,9 +25,6 @@ func NewTestHandler() Handler {
 				{ID: "96840db2-3676-4399-847e-82e9d2667457", Name: "Suzie", Email: "***REMOVED***", Credit: 0},
 				{ID: "b1af6aba-9ec1-4f7b-ad78-d8e4496d9cbe", Name: "Camille", Email: "***REMOVED***", Credit: 0},
 				{ID: "3b930a43-ab66-48ef-89cd-417dba5d9c8f", Name: "Mateusz", Email: "***REMOVED***", Credit: 0},
-				{ID: uuid.New().String(), Name: "Steve", Email: "***REMOVED***", Credit: 0},
-				{ID: uuid.New().String(), Name: "Kenny", Email: "***REMOVED***", Credit: 0},
-				{ID: uuid.New().String(), Name: "Brian", Email: "***REMOVED***", Credit: 0},
 			},
 		},
 	}
