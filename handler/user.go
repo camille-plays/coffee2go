@@ -53,7 +53,7 @@ func (h Handler) CreateUser(c *gin.Context) {
 	user := userFromRequest(userRequest)
 
 	// Add the new person to the slice.
-	h.DB.CreateUser(user)
+	h.DB.CreateUser(&user)
 	c.IndentedJSON(http.StatusCreated, user)
 }
 

@@ -1,11 +1,11 @@
 package dao
 
 type Store interface {
-	GetUsers() []*User
+	GetUsers() []User
 	GetUser(id string) *User
-	CreateUser(u User)
+	CreateUser(u *User)
 
-	GetTransactions() []*Transaction
+	GetTransactions() []Transaction
 	GetTransaction(id string) *Transaction
-	CreateTransaction(Transaction)
+	CreateTransaction(t *Transaction)
 }

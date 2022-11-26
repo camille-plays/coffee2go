@@ -24,7 +24,7 @@ func (h Handler) CreateTransaction(c *gin.Context) {
 
 	transaction := transactionFromRequest(transactionRequest)
 
-	h.DB.CreateTransaction(transaction)
+	h.DB.CreateTransaction(&transaction)
 	c.Status(http.StatusOK)
 	return
 }

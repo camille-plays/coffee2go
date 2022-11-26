@@ -2,11 +2,15 @@ package dao
 
 type MockStore struct {
 	Users        []*User
-	Transactions []*Transaction
+	Transactions []Transaction
 }
 
-func (s *MockStore) GetUsers() []*User {
-	return s.Users
+func (s *MockStore) GetUsers() []User {
+	users := make([]User, len(s.Users))
+	for k, v := range s.Users {
+		users[k] = *v
+	}
+	return users
 }
 
 func (s *MockStore) GetUser(id string) *User {
@@ -18,26 +22,26 @@ func (s *MockStore) GetUser(id string) *User {
 	return nil
 }
 
-func (s *MockStore) CreateUser(u User) {
-	s.Users = append(s.Users, &u)
+func (s *MockStore) CreateUser(u *User) {
+	s.Users = append(s.Users, u)
 }
 
-func (s *MockStore) GetTransactions() []*Transaction {
+func (s *MockStore) GetTransactions() []Transaction {
 	return s.Transactions
 }
 
 func (s *MockStore) GetTransaction(id string) *Transaction {
 	for _, v := range s.Transactions {
 		if v.ID == id {
-			return v
+			return &v
 		}
 	}
 	return nil
 }
 
-func (s *MockStore) CreateTransaction(t Transaction) {
+func (s *MockStore) CreateTransaction(t *Transaction) {
 	// persist transaction history
-	s.Transactions = append(s.Transactions, &t)
+	s.Transactions = append(s.Transactions, *t)
 
 	// increment credit of owner
 	for _, a := range s.Users {
