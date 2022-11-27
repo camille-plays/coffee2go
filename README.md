@@ -14,4 +14,4 @@ Coffee credit tracker
 
 ```curl http://localhost:8080/transaction/{UUID}``` to get a transaction by ID
 
-```curl http://localhost:8080/transaction --include --header "Content-Type: application/json" --request "POST" --data '{"owner": {UUID}, "recipients": ["{UUID1}", "{UUID2}"]}'``` to create a new transaction
+```curl -X POST -d '{"owner": {UUID}, "recipients": ["{UUID1}", "{UUID2}"]}' http://localhost:8080/transaction``` to create a new transaction

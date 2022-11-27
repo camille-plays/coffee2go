@@ -8,7 +8,7 @@ import (
 func main() {
 
 	router := gin.Default()
-	h := handler.NewTestHandler()
+	h := handler.NewLocalHandler()
 
 	router.GET("/users", h.GetUsers)
 	router.GET("/user/:id", h.GetUserByID)

@@ -5,7 +5,7 @@ import (
 )
 
 type Handler struct {
-	DB dao.Store
+	DB dao.Storer
 }
 
 type TransactionRequest struct {
@@ -18,6 +18,7 @@ type CreateUserRequest struct {
 	Email string `json:"email"`
 }
 
+// Dummy handler used for unit tests
 func NewTestHandler() Handler {
 	return Handler{
 		DB: &dao.MockStore{
@@ -27,5 +28,11 @@ func NewTestHandler() Handler {
 				{ID: "3b930a43-ab66-48ef-89cd-417dba5d9c8f", Name: "Mateusz", Email: "***REMOVED***", Credit: 0},
 			},
 		},
+	}
+}
+
+func NewLocalHandler() Handler {
+	return Handler{
+		DB: dao.NewLocalStore(),
 	}
 }
