@@ -38,7 +38,30 @@ func (s *Store) GetTransaction(id string) *Transaction {
 }
 
 func (s *Store) CreateTransaction(t *Transaction) {
-	s.db.Create(t)
-	// TODO: increment credit of user by 1
-	s.db.Model(&User{ID: t.Owner}).Update("credit", 1)
+	s.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(t).Error; err != nil {
+			return err
+		}
+
+		var user = &User{ID: t.Owner}
+		if err := tx.First(user).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Model(user).Update("credit", user.Credit+len(t.Recipients)).Error; err != nil {
+			return err
+		}
+
+		for _, r := range t.Recipients {
+			user.ID = r
+			if err := tx.First(user).Error; err != nil {
+				return err
+			}
+			if err := tx.Model(user).Update("credit", user.Credit-1).Error; err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }
