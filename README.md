@@ -2,6 +2,9 @@
 
 Coffee credit tracker
 
+Using GIN web framework and GORM
+Connects to sqlite3
+
 ``` go run . ``` to start the server
 
 ```curl http://localhost:8080/users``` to get a list of users
@@ -14,4 +17,4 @@ Coffee credit tracker
 
 ```curl http://localhost:8080/transaction/{UUID}``` to get a transaction by ID
 
-```curl -X POST -d '{"owner": {UUID}, "recipients": ["{UUID1}", "{UUID2}"]}' http://localhost:8080/transaction``` to create a new transaction
+```curl -X POST -d '{"owner": {UUID}, "recipients": [{UUID1}, {UUID2}]}' http://localhost:8080/transaction``` to create a new transaction
