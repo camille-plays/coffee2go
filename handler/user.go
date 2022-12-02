@@ -42,7 +42,7 @@ func (h Handler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	if err := validateUserRequest(userRequest); err != nil {
+	if err := h.validateCreateUserRequest(userRequest); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, err)
 		return
 	}
@@ -61,7 +61,25 @@ func userFromRequest(r CreateUserRequest) dao.User {
 	}
 }
 
-func validateUserRequest(userRequest CreateUserRequest) error {
+func (h Handler) DeleteUser(c *gin.Context) {
+	var userRequest DeleteUserRequest
+
+	if err := c.BindJSON(&userRequest); err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+	if err := h.validateDeleteUserRequest(userRequest); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, err)
+		return
+	}
+
+	h.DB.DeleteUser(h.DB.GetUser(userRequest.ID))
+	c.IndentedJSON(http.StatusOK, h.DB.GetUsers())
+
+}
+
+func (h Handler) validateCreateUserRequest(userRequest CreateUserRequest) error {
 
 	if userRequest.Name == "" {
 		return fmt.Errorf("Please provide a valid name")
@@ -69,6 +87,29 @@ func validateUserRequest(userRequest CreateUserRequest) error {
 
 	if userRequest.Email == "" {
 		return fmt.Errorf("please provide a valid email")
+	}
+
+	for _, u := range h.DB.GetUsers() {
+		if userRequest.Name == u.Name {
+			return fmt.Errorf("username already exists")
+		}
+		if userRequest.Email == u.Email {
+			return fmt.Errorf("email already exists")
+		}
+	}
+
+	return nil
+}
+
+func (h Handler) validateDeleteUserRequest(userRequest DeleteUserRequest) error {
+	var userFound bool
+	for _, u := range h.DB.GetUsers() {
+		if userRequest.ID == u.ID {
+			userFound = true
+		}
+	}
+	if !userFound {
+		return fmt.Errorf("user not found")
 	}
 	return nil
 }

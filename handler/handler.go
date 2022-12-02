@@ -18,6 +18,10 @@ type CreateUserRequest struct {
 	Email string `json:"email"`
 }
 
+type DeleteUserRequest struct {
+	ID string `json:"id"`
+}
+
 // Dummy handler used for unit tests
 func NewTestHandler() Handler {
 	return Handler{

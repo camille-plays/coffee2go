@@ -26,6 +26,16 @@ func (s *MockStore) CreateUser(u *User) {
 	s.Users = append(s.Users, u)
 }
 
+func (s *MockStore) DeleteUser(u *User) {
+	i := -1
+	for k, v := range s.Users {
+		if v == u {
+			i = k
+		}
+	}
+	s.Users = append(s.Users[:i], s.Users[i+1:]...)
+}
+
 func (s *MockStore) GetTransactions() []Transaction {
 	return s.Transactions
 }

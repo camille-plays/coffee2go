@@ -25,6 +25,10 @@ func (s *Store) CreateUser(u *User) {
 	s.db.Create(u)
 }
 
+func (s *Store) DeleteUser(u *User) {
+	s.db.Delete(u)
+}
+
 func (s *Store) GetTransactions() []Transaction {
 	var tr []Transaction
 	s.db.Find(&tr)

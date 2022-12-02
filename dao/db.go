@@ -10,6 +10,7 @@ type Storer interface {
 	GetUsers() []User
 	GetUser(id string) *User
 	CreateUser(u *User)
+	DeleteUser(u *User)
 
 	GetTransactions() []Transaction
 	GetTransaction(id string) *Transaction
