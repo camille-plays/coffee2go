@@ -34,19 +34,20 @@ func TestGetTransactions(t *testing.T) {
 // 	h := NewTestHandler()
 // 	router.POST("/transaction", h.CreateTransaction)
 
-// 	owner := h.DB.GetUsers()[0]
-// 	ownerCredit := owner.Credit
-
-// 	recipient := h.DB.GetUsers()[1]
-// 	recipientCredit := recipient.Credit
-
+// 	var owner dao.User = h.DB.GetUsers()[0]
+// 	var ownerCredit int = owner.Credit
+// 	var recipient dao.User = h.DB.GetUsers()[1]
+// 	var recipientCredit int = recipient.Credit
 // 	var recipients []string
-// 	recipients = append(recipients, owner.ID, recipient.ID)
 
-// 	jsonBody := []byte(`{"owner": owner.ID, "recipients": recipients}`)
-// 	bodyReader := bytes.NewReader(jsonBody)
+// 	jsonBody := map[string]interface{}{
+// 		"owner":      owner,
+// 		"recipients": append(recipients, owner.ID, recipient.ID),
+// 	}
 
-// 	req, _ := http.NewRequest("POST", "/transaction", bodyReader)
+// 	body, _ := json.Marshal(jsonBody)
+
+// 	req, _ := http.NewRequest("POST", "/transaction", bytes.NewReader(body))
 // 	w := httptest.NewRecorder()
 // 	router.ServeHTTP(w, req)
 
