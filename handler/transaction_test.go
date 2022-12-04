@@ -151,38 +151,82 @@ func TestCreateTransaction(t *testing.T) {
 	}
 }
 
-func TestCreateTransactionInvalidRequest(t *testing.T) {
-	router := gin.Default()
-	h := NewTestHandler()
-	router.POST("/transaction", h.CreateTransaction)
+func TestGetTransactionById(t *testing.T) {
 
-	jsonBody := []byte(`{"owner": "bla"`)
-	bodyReader := bytes.NewReader(jsonBody)
+	tests := []struct {
+		name                string
+		id                  string
+		store               *dao.MockStore
+		expectedTransaction dao.Transaction
+		expectedStatusCode  int
+		expectedError       string
+	}{
+		{
+			name: "transaction exists",
+			id:   "a35d3f60-1e40-4a33-94dd-99e58121c29e",
+			store: &dao.MockStore{
+				Transactions: []dao.Transaction{
+					{
+						ID:    "a35d3f60-1e40-4a33-94dd-99e58121c29e",
+						Owner: "96840db2-3676-4399-847e-82e9d2667457",
+						Recipients: []string{
+							"96840db2-3676-4399-847e-82e9d2667457",
+							"b1af6aba-9ec1-4f7b-ad78-d8e4496d9cbe",
+						},
+						Timestamp: 1,
+					},
+				},
+			},
+			expectedTransaction: dao.Transaction{
+				ID:    "a35d3f60-1e40-4a33-94dd-99e58121c29e",
+				Owner: "96840db2-3676-4399-847e-82e9d2667457",
+				Recipients: []string{
+					"96840db2-3676-4399-847e-82e9d2667457",
+					"b1af6aba-9ec1-4f7b-ad78-d8e4496d9cbe",
+				},
+				Timestamp: 1,
+			},
+			expectedStatusCode: http.StatusOK,
+		},
 
-	req, _ := http.NewRequest("POST", "/transaction", bodyReader)
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+		{
+			name: "transaction doesn't exist",
+			id:   uuid.NewString(),
+			store: &dao.MockStore{
+				Transactions: []dao.Transaction{
+					{
+						ID:    "a35d3f60-1e40-4a33-94dd-99e58121c29e",
+						Owner: "96840db2-3676-4399-847e-82e9d2667457",
+						Recipients: []string{
+							"96840db2-3676-4399-847e-82e9d2667457",
+							"b1af6aba-9ec1-4f7b-ad78-d8e4496d9cbe",
+						},
+						Timestamp: 1,
+					},
+				},
+			},
+			expectedStatusCode: http.StatusNotFound,
+		},
+	}
 
-	require.Equal(t, http.StatusBadRequest, w.Code)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			router := gin.Default()
+			h := Handler{DB: tt.store}
+
+			router.GET("/transaction/:id", h.GetTransactionById)
+			req, _ := http.NewRequest("GET", "/transaction/"+tt.id, nil)
+			w := httptest.NewRecorder()
+			router.ServeHTTP(w, req)
+
+			require.Equal(t, tt.expectedStatusCode, w.Code)
+
+			if tt.expectedStatusCode == http.StatusOK {
+				var transaction dao.Transaction
+				err := json.NewDecoder(w.Body).Decode(&transaction)
+				require.NoError(t, err)
+				require.Equal(t, transaction, tt.expectedTransaction)
+			}
+		})
+	}
 }
-
-// func TestGetTransactionById(t *testing.T) {
-// 	router := gin.Default()
-// 	h := NewTestHandler()
-// 	var transactionID string = uuid.New().String()
-// 	h.DB.CreateTransaction()
-// 	router.GET("/transaction/:id", h.GetTransactionById)
-
-// 	validId := h.DB.GetTransactions()[0].ID
-
-// 	req, _ := http.NewRequest("GET", "/transaction/"+validId, nil)
-// 	w := httptest.NewRecorder()
-// 	router.ServeHTTP(w, req)
-
-// 	var firstTransaction dao.Transaction
-
-// 	err := json.NewDecoder(w.Body).Decode(&firstTransaction)
-// 	require.NoError(t, err)
-// 	require.Equal(t, http.StatusOK, w.Code)
-// 	require.Equal(t, firstTransaction.ID, validId)
-// }
