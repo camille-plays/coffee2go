@@ -22,6 +22,10 @@ type DeleteUserRequest struct {
 	ID string `json:"id"`
 }
 
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
 // Dummy handler used for unit tests
 func NewTestHandler() Handler {
 	return Handler{

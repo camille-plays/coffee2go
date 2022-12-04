@@ -18,14 +18,14 @@ func (h Handler) CreateTransaction(c *gin.Context) {
 	}
 
 	if err := h.validateTransaction(transactionRequest); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, ErrorResponse{Error: err.Error()})
 		return
 	}
 
 	transaction := transactionFromRequest(transactionRequest)
 
 	h.DB.CreateTransaction(&transaction)
-	c.Status(http.StatusOK)
+	c.IndentedJSON(http.StatusCreated, transaction)
 	return
 }
 
@@ -62,7 +62,7 @@ func transactionFromRequest(t TransactionRequest) dao.Transaction {
 
 func (h Handler) validateTransaction(tr TransactionRequest) error {
 	if tr.Owner == "" {
-		return fmt.Errorf("Please provide an owner")
+		return fmt.Errorf("please provide an owner")
 	}
 
 	if tr.Recipients == nil || len(tr.Recipients) == 0 {

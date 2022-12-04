@@ -9,6 +9,7 @@ import (
 
 	"github.com/camille-plays/coffee2go/dao"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
 
@@ -66,20 +67,69 @@ func TestCreateUserInvalidRequest(t *testing.T) {
 }
 
 func TestGetUserById(t *testing.T) {
-	router := gin.Default()
-	h := NewTestHandler()
-	router.GET("/user/:id", h.GetUserByID)
+	tests := []struct {
+		name               string
+		id                 string
+		store              *dao.MockStore
+		expectedUser       dao.User
+		expectedStatusCode int
+	}{
+		{
+			name: "user exists",
+			id:   "96840db2-3676-4399-847e-82e9d2667457",
+			store: &dao.MockStore{
+				Users: []*dao.User{
+					{
+						ID:     "96840db2-3676-4399-847e-82e9d2667457",
+						Name:   "John",
+						Email:  "john@email.com",
+						Credit: 10,
+					},
+				},
+			},
+			expectedUser: dao.User{
+				ID:     "96840db2-3676-4399-847e-82e9d2667457",
+				Name:   "John",
+				Email:  "john@email.com",
+				Credit: 10,
+			},
+			expectedStatusCode: http.StatusOK,
+		},
+		{
+			name: "user doesn't exist",
+			id:   uuid.NewString(),
+			store: &dao.MockStore{
+				Users: []*dao.User{
+					{
+						ID:     "96840db2-3676-4399-847e-82e9d2667457",
+						Name:   "John",
+						Email:  "john@email.com",
+						Credit: 10,
+					},
+				},
+			},
+			expectedStatusCode: http.StatusNotFound,
+		},
+	}
 
-	validId := h.DB.GetUsers()[0].ID
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			router := gin.Default()
+			h := Handler{DB: tt.store}
 
-	req, _ := http.NewRequest("GET", "/user/"+validId, nil)
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+			router.GET("/user/:id", h.GetUserByID)
+			req, _ := http.NewRequest("GET", "/user/"+tt.id, nil)
+			w := httptest.NewRecorder()
+			router.ServeHTTP(w, req)
+			var user dao.User
+			require.Equal(t, tt.expectedStatusCode, w.Code)
 
-	var firstUser dao.User
+			if tt.expectedStatusCode == http.StatusOK {
+				err := json.NewDecoder(w.Body).Decode(&user)
+				require.NoError(t, err)
+				require.Equal(t, user, tt.expectedUser)
+			}
+		})
+	}
 
-	err := json.NewDecoder(w.Body).Decode(&firstUser)
-	require.NoError(t, err)
-	require.Equal(t, http.StatusOK, w.Code)
-	require.Equal(t, firstUser.ID, validId)
 }

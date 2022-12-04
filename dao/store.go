@@ -26,7 +26,7 @@ func (s *Store) CreateUser(u *User) {
 }
 
 func (s *Store) DeleteUser(u *User) {
-	s.db.Delete(u)
+	s.db.Delete(&u)
 }
 
 func (s *Store) GetTransactions() []Transaction {
