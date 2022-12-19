@@ -41,6 +41,6 @@ func NewTestHandler() Handler {
 
 func NewLocalHandler() Handler {
 	return Handler{
-		DB: dao.NewLocalStore(),
+		DB: dao.InitPostgresStore(),
 	}
 }
