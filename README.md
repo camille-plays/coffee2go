@@ -5,7 +5,7 @@ Coffee credit tracker
 Using GIN web framework and GORM
 Connects to sqlite3
 
-``` go run . ``` to start the server
+On the root directory, ``` docker-compose up``` to start the postgres DB, then ``` go run . ``` to start the server
 
 ```curl http://localhost:8080/users``` to get a list of users
 
