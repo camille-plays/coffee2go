@@ -31,7 +31,6 @@ func (h Handler) GetUserByID(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNotFound)
-	return
 }
 
 func (h Handler) CreateUser(c *gin.Context) {
@@ -82,7 +81,7 @@ func (h Handler) DeleteUser(c *gin.Context) {
 func (h Handler) validateCreateUserRequest(userRequest CreateUserRequest) error {
 
 	if userRequest.Name == "" {
-		return fmt.Errorf("Please provide a valid name")
+		return fmt.Errorf("please provide a valid name")
 	}
 
 	if userRequest.Email == "" {
