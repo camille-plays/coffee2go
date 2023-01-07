@@ -17,7 +17,9 @@ func (s *Store) GetUsers() []User {
 
 func (s *Store) GetUser(id string) *User {
 	var user = &User{ID: id}
-	s.db.First(user)
+	if result := s.db.First(&user); result.Error != nil {
+		return nil
+	}
 	return user
 }
 
