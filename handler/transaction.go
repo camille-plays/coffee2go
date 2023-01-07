@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/camille-plays/coffee2go/dao"
 	"github.com/gin-gonic/gin"
@@ -26,7 +27,6 @@ func (h Handler) CreateTransaction(c *gin.Context) {
 
 	h.DB.CreateTransaction(&transaction)
 	c.IndentedJSON(http.StatusCreated, transaction)
-	return
 }
 
 func (h Handler) GetTransactions(c *gin.Context) {
@@ -49,7 +49,6 @@ func (h Handler) GetTransactionById(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNotFound)
-	return
 }
 
 func transactionFromRequest(t TransactionRequest) dao.Transaction {
@@ -57,6 +56,7 @@ func transactionFromRequest(t TransactionRequest) dao.Transaction {
 		Owner:      t.Owner,
 		Recipients: t.Recipients,
 		ID:         uuid.New().String(),
+		Timestamp:  int(time.Now().Unix()),
 	}
 }
 
