@@ -1,15 +1,15 @@
 package dao
 
 import (
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-  	"gorm.io/driver/postgres"
 )
 
 type Storer interface {
 	GetUsers() []User
 	GetUser(id string) *User
 	CreateUser(u *User)
-	DeleteUser(u *User)
+	DeleteUser(u *User) error
 
 	GetTransactions() []Transaction
 	GetTransaction(id string) *Transaction
@@ -20,7 +20,7 @@ type Storer interface {
 func InitPostgresStore() *Store {
 	dbURL := "postgres://pg:pass@localhost:5432/crud"
 
-    db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}

@@ -61,21 +61,18 @@ func userFromRequest(r CreateUserRequest) dao.User {
 }
 
 func (h Handler) DeleteUser(c *gin.Context) {
-	var userRequest DeleteUserRequest
+	var deleteRequest DeleteUserRequest
 
-	if err := c.BindJSON(&userRequest); err != nil {
+	if err := c.BindJSON(&deleteRequest); err != nil {
 		c.Status(http.StatusBadRequest)
 		return
 	}
 
-	if err := h.validateDeleteUserRequest(userRequest); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, err)
-		return
+	err := h.DB.DeleteUser(&dao.User{ID: deleteRequest.ID})
+	if err != nil {
+		c.Status(http.StatusBadRequest)
 	}
-
-	h.DB.DeleteUser(h.DB.GetUser(userRequest.ID))
 	c.IndentedJSON(http.StatusOK, h.DB.GetUsers())
-
 }
 
 func (h Handler) validateCreateUserRequest(userRequest CreateUserRequest) error {
@@ -97,18 +94,5 @@ func (h Handler) validateCreateUserRequest(userRequest CreateUserRequest) error 
 		}
 	}
 
-	return nil
-}
-
-func (h Handler) validateDeleteUserRequest(userRequest DeleteUserRequest) error {
-	var userFound bool
-	for _, u := range h.DB.GetUsers() {
-		if userRequest.ID == u.ID {
-			userFound = true
-		}
-	}
-	if !userFound {
-		return fmt.Errorf("user not found")
-	}
 	return nil
 }

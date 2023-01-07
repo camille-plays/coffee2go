@@ -1,6 +1,8 @@
 package dao
 
 import (
+	"fmt"
+
 	"gorm.io/gorm"
 )
 
@@ -27,8 +29,13 @@ func (s *Store) CreateUser(u *User) {
 	s.db.Create(u)
 }
 
-func (s *Store) DeleteUser(u *User) {
-	s.db.Delete(&u)
+func (s *Store) DeleteUser(u *User) error {
+	if result := s.db.Delete(u); result.RowsAffected < 1 {
+		fmt.Println(result.RowsAffected)
+		return fmt.Errorf("no user found")
+	}
+
+	return nil
 }
 
 func (s *Store) GetTransactions() []Transaction {
