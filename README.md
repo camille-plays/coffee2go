@@ -19,7 +19,7 @@ curl http://localhost:8080/user/{UUID}
 
 To add a new person:
 ```bash
-curl http://localhost:8080/user --include --header "Content-Type: application/json" --request "POST" --data '{"name": "Foo","email": "foo@transferwise.com"}'
+curl http://localhost:8080/user --include --header "Content-Type: application/json" --request "POST" --data '{"name": "Foo","email": "foo@transferwise.com", "avatar": "avatar_1"}'
 ```
 
 To delete a user:
